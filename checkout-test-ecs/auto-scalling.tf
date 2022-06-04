@@ -32,7 +32,7 @@ resource "aws_security_group" "ec2-sg" {
   ingress {
     from_port       = 0
     protocol        = "tcp"
-    security_groups = aws_security_group.alb_sg.id
+    security_groups = [aws_security_group.alb_sg.id]
     to_port         = 65535
   }
 

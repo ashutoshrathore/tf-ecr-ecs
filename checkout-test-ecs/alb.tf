@@ -24,7 +24,7 @@ resource "aws_security_group" "alb_sg" {
 
 resource "aws_lb" "alb-ecs" {
   name            = "alb-ecs-public"
-  security_groups = aws_security_group.alb_sg.id
+  security_groups = [aws_security_group.alb_sg.id]
 
   subnets = [
     aws_subnet.public_subnet_a.id,
