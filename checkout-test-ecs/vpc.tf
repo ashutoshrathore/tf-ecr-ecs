@@ -22,7 +22,7 @@ resource "aws_subnet" "public_subnet_a" {
 
 resource "aws_subnet" "private_subnet_a" {
   availability_zone       = "us-east-1a"
-  cidr_block              = "10.0.2.0/24"
+  cidr_block              = "10.0.1.0/24"
   map_public_ip_on_launch = false
 
   tags = {
@@ -31,6 +31,19 @@ resource "aws_subnet" "private_subnet_a" {
 
   vpc_id= aws_vpc.vpc_checkout_ecs.id
 }
+
+resource "aws_subnet" "private_subnet_b" {
+  availability_zone       = "us-east-1b"
+  cidr_block              = "10.0.2.0/24"
+  map_public_ip_on_launch = false
+
+  tags = {
+    Name = "private-us-east-1b"
+  }
+
+  vpc_id= aws_vpc.vpc_checkout_ecs.id
+}
+
 
 resource "aws_internet_gateway" "vpc_checkout_ig" {
   vpc_id = aws_vpc.vpc_checkout_ecs.id
@@ -62,6 +75,6 @@ resource "aws_route_table" "private" {
 }
 
 resource "aws_route_table_association" "private" {
-  subnet_id      = aws_subnet.private_subnet_a.id
+  subnet_id      = [aws_subnet.private_subnet_a.id, aws_subnet.private_subnet_a.id]
   route_table_id = aws_route_table.private.id
 }
