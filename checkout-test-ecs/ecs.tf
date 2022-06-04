@@ -1,6 +1,6 @@
 resource "aws_ecs_cluster" "web-cluster" {
   name               = var.ecs_cluster_name
-  capacity_providers = aws_ecs_capacity_provider.ecs-capacity.name
+  capacity_providers = [aws_ecs_capacity_provider.ecs-capacity.name]
   tags = {
     "Name" = "ecs-cluster"
   }
