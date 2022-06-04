@@ -6,7 +6,3 @@ resource "aws_ecr_repository" "repo-checkout-test" {
     scan_on_push = true
   }
 }
-
-output "ECR_REPOSITORY" {
-  value = aws_ecr_repository.repo-checkout-test.repository_url
-}
