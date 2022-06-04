@@ -70,7 +70,7 @@ resource "aws_autoscaling_group" "ecs-asg" {
   desired_capacity          = 2
   health_check_type         = "ELB"
   health_check_grace_period = 300
-  vpc_zone_identifier       = aws_subnet.private_subnet_a.id
+  vpc_zone_identifier       = [aws_subnet.private_subnet_a.id]
 
   target_group_arns     = [aws_lb_target_group.alb_target_group.arn]
   protect_from_scale_in = true
