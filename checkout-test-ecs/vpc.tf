@@ -43,19 +43,16 @@ resource "aws_route" "internet_access_checkout" {
 }
 
 resource "aws_eip" "eip_gateway" {
-  count      = 1
   vpc        = true
   depends_on = [aws_internet_gateway.vpc_checkout_ig]
 }
 
 resource "aws_nat_gateway" "gateway" {
-  count         = 1
   subnet_id     = aws_subnet.public_subnet_a.id
   allocation_id = aws_eip.eip_gateway.id
 }
 
 resource "aws_route_table" "private" {
-  count  = 1
   vpc_id = aws_vpc.vpc_checkout_ecs.id
 
   route {
@@ -65,7 +62,6 @@ resource "aws_route_table" "private" {
 }
 
 resource "aws_route_table_association" "private" {
-  count          = 1
   subnet_id      = aws_subnet.private_subnet_a.id
   route_table_id = aws_route_table.private.id
 }
