@@ -1,6 +1,7 @@
 resource "aws_security_group" "alb_sg" {
   description = "security-group-alb"
   name = "security-group-alb"
+  vpc_id = aws_vpc.vpc_checkout_ecs.id
 
   egress {
     cidr_blocks = ["0.0.0.0/0"]
@@ -19,17 +20,13 @@ resource "aws_security_group" "alb_sg" {
     Name = "security-group-alb"
   }
 
-  vpc_id = aws_vpc.vpc_checkout_ecs.id
 }
 
 resource "aws_lb" "alb-ecs" {
   name            = "alb-ecs-public"
   security_groups = [aws_security_group.alb_sg.id]
+  subnets = aws_subnet.public_subnet_a.id
 
-  subnets = [
-    aws_subnet.public_subnet_a.id,
-    aws_subnet.public_subnet_b.id,
-  ]
 }
 
 resource "aws_lb_target_group" "alb_target_group" {
@@ -37,6 +34,7 @@ resource "aws_lb_target_group" "alb_target_group" {
   port     = 8080
   protocol = "HTTP"
   target_type = "instance"
+  vpc_id = aws_vpc.vpc_checkout_ecs.id
 
   health_check {
     path                = "/"
@@ -51,7 +49,6 @@ resource "aws_lb_target_group" "alb_target_group" {
     type = "lb_cookie"
   }
 
-  vpc_id = aws_vpc.vpc_checkout_ecs.id
 }
 
 resource "aws_lb_listener" "web-listener" {
