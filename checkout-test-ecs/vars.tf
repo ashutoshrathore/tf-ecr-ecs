@@ -14,7 +14,7 @@ variable "ecs_task_definition_name" {
 }
 
 variable "ecs_service_name" {
-    description = "Name of ecs service
+    description = "Name of ecs service"
     type    = string
     default = "ecs-checkout-service"
 }
@@ -24,4 +24,3 @@ variable "key_name" {
     type    = string
     default = "ecs_checkout_launch"
 }
-
