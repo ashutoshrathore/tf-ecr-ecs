@@ -25,8 +25,8 @@ resource "aws_ecs_task_definition" "ecs-task-definition" {
   {
     "name": "checkout-test-container",
     "image": "557707468855.dkr.ecr.us-east-1.amazonaws.com/checkout-test-repo",
-    "memory": 1024,
-    "cpu": 512,
+    "memory": 4096,
+    "cpu": 1024,
     "essential": true,
     "entryPoint": ["/"],
     "portMappings": [
