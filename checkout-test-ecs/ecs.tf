@@ -57,3 +57,10 @@ resource "aws_cloudwatch_log_group" "cwlog" {
   }
 }
 
+resource "aws_appautoscaling_target" "target" {
+  service_namespace  = "ecs"
+  resource_id        = "service/${aws_ecs_cluster.checkout-test-cluster.name}/${aws_ecs_service.ecs_service_checkout.name}"
+  scalable_dimension = "ecs:service:DesiredCount"
+  min_capacity       = 2
+  max_capacity       = 4
+}
