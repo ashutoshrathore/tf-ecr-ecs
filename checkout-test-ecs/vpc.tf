@@ -9,7 +9,7 @@ resource "aws_vpc" "vpc_checkout_ecs" {
 }
 
 resource "aws_subnet" "public_subnet_a" {
-  availability_zone       = var.azs[1]
+  availability_zone       = var.azs[0]
   cidr_block              = var.pub_subnet_1_cidr
   map_public_ip_on_launch = true
   vpc_id = aws_vpc.vpc_checkout_ecs.id
@@ -20,7 +20,7 @@ resource "aws_subnet" "public_subnet_a" {
 }
 
 resource "aws_subnet" "public_subnet_b" {
-  availability_zone       = var.azs[2]
+  availability_zone       = var.azs[1]
   cidr_block              = var.pub_subnet_2_cidr
   map_public_ip_on_launch = true
   vpc_id = aws_vpc.vpc_checkout_ecs.id
@@ -33,7 +33,7 @@ resource "aws_subnet" "public_subnet_b" {
 
 
 resource "aws_subnet" "private_subnet_a" {
-  availability_zone       = var.azs[1]
+  availability_zone       = var.azs[0]
   cidr_block              = var.pvt_subnet_1_cidr
   map_public_ip_on_launch = false
   vpc_id= aws_vpc.vpc_checkout_ecs.id
@@ -44,7 +44,7 @@ resource "aws_subnet" "private_subnet_a" {
 }
 
 resource "aws_subnet" "private_subnet_b" {
-  availability_zone       = var.azs[2]
+  availability_zone       = var.azs[1]
   cidr_block              = var.pvt_subnet_2_cidr
   map_public_ip_on_launch = false
   vpc_id= aws_vpc.vpc_checkout_ecs.id
