@@ -7,7 +7,7 @@ resource "aws_ecs_cluster" "checkout-test-cluster" {
 
 
 resource "aws_ecs_task_definition" "ecs-task-checkout" {
-  family                   = "ecs-checkout-task"
+  family                   = "ecscheckouttask"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   cpu                      = 512
