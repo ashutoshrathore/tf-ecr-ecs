@@ -1,32 +1,22 @@
-resource "aws_ecs_cluster" "web-cluster" {
+resource "aws_ecs_cluster" "checkout-test-cluster" {
   name               = var.ecs_cluster_name
-  capacity_providers = [aws_ecs_capacity_provider.ecs-capacity.name]
   tags = {
-    "Name" = "ecs-cluster"
+    "Name" = "ecs-cluster-checkout-test"
   }
 }
 
-resource "aws_ecs_capacity_provider" "ecs-capacity" {
-  name = "capacity-provider-ecs"
-  auto_scaling_group_provider {
-    auto_scaling_group_arn         = aws_autoscaling_group.ecs-asg.arn
-    managed_termination_protection = "ENABLED"
-    managed_scaling {
-      status          = "ENABLED"
-      target_capacity = 85
-    }
-  }
-}
 
-resource "aws_ecs_task_definition" "ecs-task-definition" {
-  family                = var.ecs_task_definition_name
+resource "aws_ecs_task_definition" "ecs-task-checkout" {
+  network_mode             = "awsvpc"
+  requires_compatibilities = ["FARGATE"]
+  cpu                      = 512
+  memory                   = 1024
+  execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
   container_definitions = <<EOF
 [
   {
     "name": "checkout-test-container",
-    "image": "557707468855.dkr.ecr.us-east-1.amazonaws.com/checkout-test-repo",
-    "memory": 4096,
-    "cpu": 1024,
+    "image": "557707468855.dkr.ecr.us-east-1.amazonaws.com/checkout-test-repo:latest",
     "essential": true,
     "entryPoint": ["/"],
     "portMappings": [
@@ -38,32 +28,26 @@ resource "aws_ecs_task_definition" "ecs-task-definition" {
   }
 ]
 EOF
-  network_mode          = "bridge"
-  tags = {
-    "Name" = "checkout-container"
-  }
 }
 
 resource "aws_ecs_service" "ecs_service_checkout" {
   name            = var.ecs_service_name
-  cluster         = aws_ecs_cluster.web-cluster.id
-  task_definition = aws_ecs_task_definition.ecs-task-definition.arn
-  desired_count   = 3
-  ordered_placement_strategy {
-    type  = "binpack"
-    field = "cpu"
+  cluster         = aws_ecs_cluster.checkout-test-cluster.id
+  task_definition = aws_ecs_task_definition.ecs-task-checkout.arn
+  desired_count   = 2
+  launch_type     = "FARGATE"
+  
+  network_configuration {
+   security_groups  = [aws_security_group.ec2-sg.id]
+   subnets          = [aws_subnet.private_subnet_a.id, aws_subnet.private_subnet_b.id]
+   assign_public_ip = false
   }
   load_balancer {
     target_group_arn = aws_lb_target_group.alb_target_group.arn
     container_name   = "checkout-test-container"
     container_port   = 80
   }
-  # Optional: Allow external changes without Terraform plan difference(for example ASG)
-  lifecycle {
-    ignore_changes = [desired_count]
-  }
-  launch_type = "EC2"
-  depends_on  = [aws_lb_listener.web-listener]
+  depends_on = [aws_alb_listener.frontend, aws_iam_role_policy_attachment.ecs_task_execution_role]
 }
 
 resource "aws_cloudwatch_log_group" "cwlog" {
