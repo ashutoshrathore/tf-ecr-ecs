@@ -19,7 +19,6 @@ resource "aws_ecs_task_definition" "ecs-task-checkout" {
     "name": "checkout-test-container",
     "image": "557707468855.dkr.ecr.us-east-1.amazonaws.com/checkout-test-repo:latest",
     "essential": true,
-    "entryPoint": ["/"],
     "portMappings": [
       {
         "containerPort": 80,
