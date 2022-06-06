@@ -45,7 +45,7 @@ resource "aws_ecs_service" "ecs_service_checkout" {
   load_balancer {
     target_group_arn = aws_lb_target_group.alb_target_group.arn
     container_name   = "checkout-test-container"
-    container_port   = 80
+    container_port   = var.http_port
   }
   depends_on = [aws_alb_listener.frontend, aws_iam_role_policy_attachment.ecs_task_execution_role]
 }

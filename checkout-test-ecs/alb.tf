@@ -31,7 +31,7 @@ resource "aws_lb_target_group" "alb_target_group" {
 
 resource "aws_alb_listener" "frontend" {
   load_balancer_arn = aws_lb.alb-ecs.arn
-  port              = "80"
+  port              = var.http_port
   protocol          = "HTTP"
   depends_on        = [aws_lb_target_group.alb_target_group]
   default_action {
