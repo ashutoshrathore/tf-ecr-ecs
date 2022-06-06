@@ -24,3 +24,25 @@ variable "key_name" {
     type    = string
     default = "ecs_checkout_launch"
 }
+
+variable "pub_subnet_1_cidr" {
+  description = "CIDR Block for Public Subnet 1"
+  default     = "10.0.1.0/24"
+}
+variable "pub_subnet_2_cidr" {
+  description = "CIDR Block for Public Subnet 2"
+  default     = "10.0.2.0/24"
+}
+variable "pvt_subnet_1_cidr" {
+  description = "CIDR Block for Private Subnet 1"
+  default     = "10.0.3.0/24"
+}
+variable "pvt_subnet_2_cidr" {
+  description = "CIDR Block for Private Subnet 2"
+  default     = "10.0.4.0/24"
+}
+variable "azs" {
+  description = "Availability zones"
+  type        = list(string)
+  default     = ["us-east-1a", "us-east-1b"]
+}

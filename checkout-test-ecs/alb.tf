@@ -1,66 +1,42 @@
-resource "aws_security_group" "alb_sg" {
-  description = "security-group-alb"
-  name = "security-group-alb"
-
-  egress {
-    cidr_blocks = ["0.0.0.0/0"]
-    from_port   = 0
-    protocol    = "-1"
-    to_port     = 0
-  }
-
-  ingress {
-    cidr_blocks = ["0.0.0.0/0"]
-    from_port   = 80
-    protocol    = "tcp"
-    to_port     = 80
-  }
-  tags = {
-    Name = "security-group-alb"
-  }
-
-  vpc_id = aws_vpc.vpc_checkout_ecs.id
-}
-
 resource "aws_lb" "alb-ecs" {
   name            = "alb-ecs-public"
-  security_groups = aws_security_group.alb_sg.id
+  security_groups = [aws_security_group.alb_sg.id]
+  subnets = [aws_subnet.public_subnet_a.id, aws_subnet.public_subnet_b.id ]
 
-  subnets = [
-    aws_subnet.public_subnet_a.id,
-    aws_subnet.public_subnet_b.id,
-  ]
 }
 
 resource "aws_lb_target_group" "alb_target_group" {
   name     = "alb-target-group"
-  port     = 8080
+  port     = 80
   protocol = "HTTP"
-  target_type = "instance"
+  target_type = "ip"
+  vpc_id = aws_vpc.vpc_checkout_ecs.id
 
   health_check {
+    healthy_threshold   = "3"
+    interval            = "30"
+    protocol            = "HTTP"
+    matcher             = "200"
+    timeout             = "3"
     path                = "/"
-    healthy_threshold   = 2
-    unhealthy_threshold = 10
-    timeout             = 60
-    interval            = 300
-    matcher             = "200,301,302"
-    }
-
-  stickiness {
-    type = "lb_cookie"
+    unhealthy_threshold = "2"
   }
 
-  vpc_id = aws_vpc.vpc_checkout_ecs.id
+
+#  stickiness {
+#    type = "lb_cookie"
+#  }
+
 }
 
-resource "aws_lb_listener" "web-listener" {
-  load_balancer_arn = aws_lb.test-lb.arn
-  port              = "80"
+resource "aws_alb_listener" "frontend" {
+  load_balancer_arn = aws_lb.alb-ecs.arn
+  port              = var.http_port
   protocol          = "HTTP"
+  depends_on        = [aws_lb_target_group.alb_target_group]
   default_action {
     type             = "forward"
-    target_group_arn = aws_alb_target_group.alb_target_group.arn
+    target_group_arn = aws_lb_target_group.alb_target_group.id
   }
 }
 
