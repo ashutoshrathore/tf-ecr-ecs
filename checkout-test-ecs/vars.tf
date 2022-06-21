@@ -46,3 +46,8 @@ variable "azs" {
   type        = list(string)
   default     = ["us-east-1a", "us-east-1b"]
 }
+
+variable "http_port" {
+    description = "this needs to be secured, and should not be use 80, but using here for demo purpose"
+    default     = 80
+}
